@@ -14,32 +14,63 @@ form.addEventListener('submit', function (e) {
 
 // 建立任務元素
 function createTaskElement(taskText, isCompleted = false) {
-  const li = document.createElement('li');
-  if (isCompleted) li.classList.add('completed');
-
-  const span = document.createElement('span');
-  span.textContent = taskText;
-
-  const deleteBtn = document.createElement('button');
-  deleteBtn.textContent = '✕';
-  deleteBtn.classList.add('delete-btn');
-
-  deleteBtn.addEventListener('click', function () {
-    li.remove();
-    saveTasks();
-  });
-
-  li.addEventListener('click', function (e) {
-    if (e.target !== deleteBtn) {
-      li.classList.toggle('completed');
+    const li = document.createElement('li');
+    li.setAttribute('draggable', 'true'); // 拖曳開啟
+  
+    if (isCompleted) li.classList.add('completed');
+  
+    const span = document.createElement('span');
+    span.textContent = taskText;
+  
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '✕';
+    deleteBtn.classList.add('delete-btn');
+  
+    deleteBtn.addEventListener('click', function () {
+      li.remove();
       saveTasks();
-    }
-  });
-
-  li.appendChild(span);
-  li.appendChild(deleteBtn);
-  taskList.appendChild(li);
-}
+    });
+  
+    li.addEventListener('click', function (e) {
+      if (e.target !== deleteBtn) {
+        li.classList.toggle('completed');
+        saveTasks();
+      }
+    });
+  
+    // 拖曳功能開始
+    li.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', null); // Firefox 需要
+      li.classList.add('dragging');
+    });
+  
+    li.addEventListener('dragend', () => {
+      li.classList.remove('dragging');
+      saveTasks(); // 拖曳結束後儲存
+    });
+  
+    li.addEventListener('dragover', e => e.preventDefault());
+  
+    li.addEventListener('drop', e => {
+      e.preventDefault();
+      const dragging = document.querySelector('.dragging');
+      if (dragging && dragging !== li) {
+        const bounding = li.getBoundingClientRect();
+        const offset = e.clientY - bounding.top;
+        const midpoint = bounding.height / 2;
+        if (offset > midpoint) {
+          li.after(dragging);
+        } else {
+          li.before(dragging);
+        }
+      }
+    });
+    // 拖曳功能結束
+  
+    li.appendChild(span);
+    li.appendChild(deleteBtn);
+    taskList.appendChild(li);
+  }
 
 // 儲存到 localStorage
 function saveTasks() {
