@@ -45,15 +45,17 @@ body {
     padding: 6px 0;
   }
   
-  .completed {
-    text-decoration: line-through;
-    color: gray;
-  }
   
-  li button {
+  li .delete-btn {
     background: transparent;
     color: red;
     border: none;
     font-size: 16px;
     margin-left: 10px;
+    cursor: pointer;
+  }
+
+  .completed span {
+    text-decoration: line-through;
+    color: gray;
   }
