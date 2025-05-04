@@ -92,3 +92,24 @@ function loadTasks() {
 }
 
 window.addEventListener('load', loadTasks);
+
+// 過濾任務
+const filterSelect = document.getElementById('filter-select');
+
+filterSelect.addEventListener('change', function () {
+  filterTasks(this.value);
+});
+
+function filterTasks(filter) {
+  const tasks = document.querySelectorAll('#task-list li');
+  tasks.forEach(task => {
+    const isCompleted = task.classList.contains('completed');
+    if (filter === 'all') {
+      task.style.display = '';
+    } else if (filter === 'completed') {
+      task.style.display = isCompleted ? '' : 'none';
+    } else if (filter === 'uncompleted') {
+      task.style.display = !isCompleted ? '' : 'none';
+    }
+  });
+}
